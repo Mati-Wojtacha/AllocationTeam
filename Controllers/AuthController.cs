@@ -1,5 +1,6 @@
 ﻿// Ignore Spelling: Auth Dto
 
+using AllocationTeamAPI.Configuration;
 using AllocationTeamAPI.Dtos;
 using AllocationTeamAPI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,8 @@ namespace AllocationTeamAPI.Controllers
         }
 
         [HttpPost("registration/")]
-        public async Task<IActionResult> Registration([FromBody] UserDto userDto)
+        [SkipTokenValidation]
+        public async Task<IActionResult> Registration([FromBody] UserRegisterRequest userDto)
         {
             if (await _userService.RegisterUser(userDto)){
                 return Ok("Registration successfully");
@@ -26,7 +28,8 @@ namespace AllocationTeamAPI.Controllers
         }
 
         [HttpPost("login/")]
-        public async Task<IActionResult> Login([FromBody] UserDto userDto)
+        [SkipTokenValidation]
+        public async Task<IActionResult> Login([FromBody] UserRegisterRequest userDto)
         {
             UserLoginResponse user = await _userService.LoginUserAsync(userDto.Email, userDto.Password);
             if (user!=null)

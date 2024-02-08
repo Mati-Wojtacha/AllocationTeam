@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using AllocationTeamAPI.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,12 +18,17 @@ builder.Services.AddScoped<IMatchResultRepository, MatchResultRepository>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<MatchResultService>();
 
+builder.Services.AddSingleton<ITokenManager, TokenManager>();
+
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
 var jwtConfig = builder.Configuration.GetSection("JwtConfig").Get<JwtConfig>();
 builder.Services.AddSingleton(jwtConfig);
 
 builder.Services.AddScoped<JwtTokenService>();
+
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -100,6 +106,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<TokenValidationMiddleware>();
+
 
 app.UseHttpsRedirection();
 

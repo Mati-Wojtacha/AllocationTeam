@@ -2,6 +2,8 @@
 using AllocationTeamAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using System.Security.Claims;
 
 namespace AllocationTeamAPI.Controllers
 {
@@ -20,14 +22,24 @@ namespace AllocationTeamAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllMatchResults()
         {
-            var matchResults = await _matchResultService.GetAllMatchResultsAsync();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Bad identification.");
+            }
+            var matchResults = await _matchResultService.GetAllMatchResultsAsync(int.Parse(userIdClaim));
             return Ok(matchResults);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMatchResultById(int id)
         {
-            var matchResult = await _matchResultService.GetMatchResultByIdAsync(id);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Bad identification.");
+            }
+            var matchResult = await _matchResultService.GetMatchResultByIdAndIdUserAsync(id, int.Parse(userIdClaim));
             if (matchResult == null)
             {
                 return NotFound();
@@ -36,24 +48,35 @@ namespace AllocationTeamAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMatchResult([FromBody] MatchResult matchResult)
+        public async Task<IActionResult> CreateMatchResult([FromBody] dynamic matchResult)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Bad identification.");
+            }
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var createdMatchResult = await _matchResultService.CreateMatchResultAsync(matchResult);
-            return CreatedAtAction(nameof(GetMatchResultById), new { id = createdMatchResult.Id }, createdMatchResult);
+            var createdMatchResult = await _matchResultService.CreateMatchResultAsync(matchResult, int.Parse(userIdClaim));
+            /*            return CreatedAtAction(nameof(GetMatchResultById), new { id = createdMatchResult.Id });*/
+            return Ok(createdMatchResult.Id);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMatchResult(int id, [FromBody] MatchResult matchResult)
+        public async Task<IActionResult> UpdateMatchResult(int id, [FromBody] dynamic matchResult)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Bad identification.");
+            }
             if (id != matchResult.Id)
             {
                 return BadRequest();
             }
-            await _matchResultService.UpdateMatchResultAsync(matchResult);
+            await _matchResultService.UpdateMatchResultAsync(matchResult,id,int.Parse(userIdClaim));
             return NoContent();
         }
 

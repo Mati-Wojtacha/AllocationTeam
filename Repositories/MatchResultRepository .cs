@@ -1,6 +1,5 @@
 ﻿using AllocationTeamAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace AllocationTeamAPI.Repositories
 {
@@ -13,14 +12,14 @@ namespace AllocationTeamAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<MatchResult>> GetAllMatchResultsAsync()
+        public async Task<IEnumerable<MatchResult>> GetAllMatchByUserIdResultsAsync(int userId)
         {
-            return await _context.MatchResults.ToListAsync();
+            return await _context.MatchResults.Where(mr => mr.UserId == userId).ToListAsync();
         }
 
-        public async Task<MatchResult> GetMatchResultByIdAsync(int matchResultId)
+        public async Task<MatchResult> GetMatchResultByIdAndIdUserAsync(int matchResultId, int idUser)
         {
-            return await _context.MatchResults.FindAsync(matchResultId);
+            return await _context.MatchResults.FirstOrDefaultAsync(mr => mr.Id == matchResultId && mr.UserId == idUser);
         }
 
         public async Task<MatchResult> CreateMatchResultAsync(MatchResult matchResult)

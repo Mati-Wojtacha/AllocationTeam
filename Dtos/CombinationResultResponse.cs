@@ -2,6 +2,8 @@
 {
     public class CombinationResultResponse<T>
     {
+        internal object Item2;
+
         public int Id { get; set; }
         public List<T> FirstHalf { get; set; }
         public List<T> SecondHalf { get; set; }

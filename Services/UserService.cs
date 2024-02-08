@@ -20,7 +20,7 @@ namespace AllocationTeamAPI.Services
 
         }
 
-        public async Task<bool> RegisterUser(UserDto userDto)
+        public async Task<bool> RegisterUser(UserRegisterRequest userDto)
         {
             var users = await _userRepository.GetAllUsersAsync();
             if (users.Any(u => u.Username == userDto.Username || u.Email == userDto.Email))
@@ -79,9 +79,40 @@ namespace AllocationTeamAPI.Services
             return await _userRepository.CreateUserAsync(user);
         }
 
-        public async Task<User> UpdateUserAsync(User user)
+        public async Task<string?> UpdateUserName(int id, string username)
         {
-            return await _userRepository.UpdateUserAsync(user);
+            var users = await _userRepository.GetAllUsersAsync();
+            if (users.Any(u => u.Username == username))
+            {
+                return null;
+            }
+
+            User user = await GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+            user.Username = username;
+            await _userRepository.UpdateUserAsync(user);
+
+            return user.Username;
+        }
+
+        public async Task<bool> UpdateUserPassword(int id, string password)
+        {
+            User user = await GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+            user.PasswordHash = HashPassword(password);
+            await _userRepository.UpdateUserAsync(user);
+            return true;
+        }
+
+        public async Task UpdateUser(User user)
+        {
+            await _userRepository.UpdateUserAsync(user);
         }
 
         public async Task DeleteUserAsync(int userId)
