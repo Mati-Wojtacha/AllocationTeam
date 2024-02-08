@@ -49,11 +49,11 @@ namespace AllocationTeamAPI.Services
             return combined;
         }
 
-        public List<CombinationResult<string>> CombinationsToString(string[] tableNames)
+        public List<CombinationResultResponse<string>> CombinationsToString(string[] tableNames)
         {
             int nInput = tableNames.Length;
             var combinations = _GenerateCombinations(nInput);
-            List<CombinationResult<string>> stringList = new List<CombinationResult<string>>();
+            List<CombinationResultResponse<string>> stringList = new List<CombinationResultResponse<string>>();
 
             foreach (var combination in combinations)
             {
@@ -61,15 +61,15 @@ namespace AllocationTeamAPI.Services
                 List<string> firstHalfStrings = combination.Item2.Select(i => tableNames[i - 1]).ToList();
                 List<string> secondHalfStrings = combination.Item3.Select(i => tableNames[i - 1]).ToList();
                 // Tworzymy nowy obiekt CombinationResult, ale z uwagi na kontekst zadania, może być konieczne dostosowanie lub utworzenie nowej klasy
-                stringList.Add(new CombinationResult<string>   (id, firstHalfStrings, secondHalfStrings)); // To prawdopodobnie wymaga dostosowania
+                stringList.Add(new CombinationResultResponse<string>   (id, firstHalfStrings, secondHalfStrings)); // To prawdopodobnie wymaga dostosowania
             }
 
             return stringList;
         }
-        public List<CombinationResult<int>> GenerateCombinations(int nInput)
+        public List<CombinationResultResponse<int>> GenerateCombinations(int nInput)
         {
             var combinations = _GenerateCombinations(nInput);
-            List<CombinationResult<int>> intList = new List<CombinationResult<int>>();
+            List<CombinationResultResponse<int>> intList = new List<CombinationResultResponse<int>>();
 
             foreach (var combination in combinations)
             {
@@ -78,7 +78,7 @@ namespace AllocationTeamAPI.Services
                 List<int> firstHalfInts = combination.Item2; // Bezpośrednie przekazanie, bez konwersji
                 List<int> secondHalfInts = combination.Item3; // Bezpośrednie przekazanie, bez konwersji
 
-                intList.Add(new CombinationResult<int>(id, firstHalfInts, secondHalfInts));
+                intList.Add(new CombinationResultResponse<int>(id, firstHalfInts, secondHalfInts));
             }
 
             return intList;

@@ -23,6 +23,10 @@ namespace AllocationTeamAPI.Repositories
             return await _context.Users.FindAsync(userId);
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
         public async Task<User> CreateUserAsync(User user)
         {
             _context.Users.Add(user);

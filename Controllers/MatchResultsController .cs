@@ -1,11 +1,13 @@
 ﻿using AllocationTeamAPI.Models;
 using AllocationTeamAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AllocationTeamAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MatchResultsController : ControllerBase
     {
         private readonly MatchResultService _matchResultService;

@@ -1,5 +1,6 @@
 ﻿namespace AllocationTeamAPI.Models
 {
+    using AllocationTeamAPI.Dtos;
     using System;
 
     public class User
@@ -10,7 +11,7 @@
         public required string Email { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? LastLogin { get; set; }
-        public List<MatchResult> MatchResults { get; set; } = new List<MatchResult>(); 
+        public List<MatchResult> MatchResults { get; set; } = new List<MatchResult>();
 
     }
 
