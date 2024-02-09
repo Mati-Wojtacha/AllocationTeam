@@ -18,7 +18,6 @@ namespace AllocationTeamAPI.Controllers
         }
 
         [HttpPost("registration/")]
-        [SkipTokenValidation]
         public async Task<IActionResult> Registration([FromBody] UserRegisterRequest userDto)
         {
             if (await _userService.RegisterUser(userDto)){
@@ -28,7 +27,6 @@ namespace AllocationTeamAPI.Controllers
         }
 
         [HttpPost("login/")]
-        [SkipTokenValidation]
         public async Task<IActionResult> Login([FromBody] UserRegisterRequest userDto)
         {
             UserLoginResponse user = await _userService.LoginUserAsync(userDto.Email, userDto.Password);

@@ -2,7 +2,6 @@ using AllocationTeamAPI;
 using AllocationTeamAPI.Repositories;
 using AllocationTeamAPI.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 using AllocationTeamAPI.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -21,28 +20,17 @@ builder.Services.AddScoped<MatchResultService>();
 builder.Services.AddSingleton<ITokenManager, TokenManager>();
 
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
 var jwtConfig = builder.Configuration.GetSection("JwtConfig").Get<JwtConfig>();
 builder.Services.AddSingleton(jwtConfig);
 
+builder.Services.AddJwtBearerSetup(jwtConfig);
+
 builder.Services.AddScoped<JwtTokenService>();
 
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key)),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidIssuer = jwtConfig.Issuer,
-            ValidAudience = jwtConfig.Audience
-        };
-    });
 
 builder.Services.AddSingleton<DatabaseConnectionChecker>(serviceProvider =>
 {
@@ -62,45 +50,10 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
-            },
-            new List<string>()
-        }
-    });
-});
-
-
+builder.Services.AddSwaggerSetup();
 
 var app = builder.Build();
 
-
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

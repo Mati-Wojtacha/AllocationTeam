@@ -1,4 +1,5 @@
-﻿using AllocationTeamAPI.Models;
+﻿using AllocationTeamAPI.Interfaces;
+using AllocationTeamAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 

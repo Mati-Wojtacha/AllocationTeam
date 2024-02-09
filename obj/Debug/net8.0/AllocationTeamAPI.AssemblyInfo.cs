@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AllocationTeamAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7fd95884e0922fb7b5e76c0cb20826b2fb4593f1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9dbc786e60eeb66f08d76736805ae311b2594a9f")]
 [assembly: System.Reflection.AssemblyProductAttribute("AllocationTeamAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AllocationTeamAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -62,6 +62,7 @@ namespace AllocationTeamAPI.Controllers
                 var token = authorizationHeader.Substring("Bearer ".Length).Trim();
                 _tokenManager.DisableToken(token);
                 await _userService.DeleteUserAsync(int.Parse(userIdClaim));
+                return Ok("Delete user successfully");
             }
             return NoContent();
         }

@@ -1,7 +1,6 @@
 ﻿using AllocationTeamAPI.Dtos;
 using AllocationTeamAPI.Models;
 using AllocationTeamAPI.Repositories;
-using Newtonsoft.Json.Linq;
 
 namespace AllocationTeamAPI.Services
 {
@@ -26,9 +25,18 @@ namespace AllocationTeamAPI.Services
             return matchResultResponses;
         }
 
-        public async Task<MatchResult> GetMatchResultByIdAndIdUserAsync(int matchResultId, int idUser)
+        private async Task<MatchResult> GetMatchResultByIdAndIdUserAsync(int matchResultId, int idUser)
         {
             return await _matchResultRepository.GetMatchResultByIdAndIdUserAsync(matchResultId, idUser);
+        }
+        public async Task<MatchResultResponse?> FetchMatchResultForUserAsync(int matchResultId, int idUser)
+        {
+            MatchResult response = await GetMatchResultByIdAndIdUserAsync(matchResultId, idUser);
+            if (response == null)
+            {
+                return null;
+            }
+            return MatchResultResponse.FromMatchResult(response);
         }
 
         public async Task<MatchResult?> CreateMatchResultAsync(dynamic matchResult, int idUser)
@@ -55,13 +63,23 @@ namespace AllocationTeamAPI.Services
         public async Task<MatchResult> UpdateMatchResultAsync(dynamic matchResult, int id, int idUser)
         {
             MatchResult match =await GetMatchResultByIdAndIdUserAsync(id, idUser);
+            if (match == null)
+            {
+                return null;
+            }
             match.MatchResultJson = matchResult.ToString();
             return await _matchResultRepository.UpdateMatchResultAsync(match);
         }
 
-        public async Task DeleteMatchResultAsync(int matchResultId)
+        public async Task<bool> DeleteMatchResultAsync(int id, int idUser)
         {
-            await _matchResultRepository.DeleteMatchResultAsync(matchResultId);
+            MatchResult match = await GetMatchResultByIdAndIdUserAsync(id, idUser);
+            if (match == null)
+            {
+                return false;
+            }
+            await _matchResultRepository.DeleteMatchResultAsync(id);
+            return true;
         }
     }
 }

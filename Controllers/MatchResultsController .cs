@@ -2,7 +2,6 @@
 using AllocationTeamAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 
 namespace AllocationTeamAPI.Controllers
@@ -39,7 +38,7 @@ namespace AllocationTeamAPI.Controllers
             {
                 return Unauthorized("Bad identification.");
             }
-            var matchResult = await _matchResultService.GetMatchResultByIdAndIdUserAsync(id, int.Parse(userIdClaim));
+            var matchResult = await _matchResultService.FetchMatchResultForUserAsync(id, int.Parse(userIdClaim));
             if (matchResult == null)
             {
                 return NotFound();
@@ -60,7 +59,6 @@ namespace AllocationTeamAPI.Controllers
                 return BadRequest(ModelState);
             }
             var createdMatchResult = await _matchResultService.CreateMatchResultAsync(matchResult, int.Parse(userIdClaim));
-            /*            return CreatedAtAction(nameof(GetMatchResultById), new { id = createdMatchResult.Id });*/
             return Ok(createdMatchResult.Id);
         }
 
@@ -72,19 +70,30 @@ namespace AllocationTeamAPI.Controllers
             {
                 return Unauthorized("Bad identification.");
             }
-            if (id != matchResult.Id)
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
-            await _matchResultService.UpdateMatchResultAsync(matchResult,id,int.Parse(userIdClaim));
-            return NoContent();
+            MatchResult match = await _matchResultService.UpdateMatchResultAsync(matchResult,id,int.Parse(userIdClaim));
+            if(match != null)
+            {
+                return Ok($"Update matchResult id {match.Id} successfully");
+            }
+            return NotFound(id);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMatchResult(int id)
         {
-            await _matchResultService.DeleteMatchResultAsync(id);
-            return NoContent();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized("Bad identification.");
+            }
+            bool isDelete = await _matchResultService.DeleteMatchResultAsync(id, int.Parse(userIdClaim));
+            if(isDelete)
+                return Ok($"Delete matchResult id {id} successfully");
+            return NotFound(id);
         }
     }
 }

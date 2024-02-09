@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System.Text.Json; 
 using AllocationTeamAPI.Models;
 
 namespace AllocationTeamAPI.Dtos
@@ -6,9 +6,9 @@ namespace AllocationTeamAPI.Dtos
     public class MatchResultResponse
     {
         public int Id { get; set; }
-        public string Result { get; set; }
+        public dynamic Result { get; set; }
 
-        public MatchResultResponse(int id, string result)
+        public MatchResultResponse(int id, dynamic result)
         {
             Id = id;
             Result = result;
@@ -16,7 +16,17 @@ namespace AllocationTeamAPI.Dtos
 
         public static MatchResultResponse FromMatchResult(MatchResult matchResult)
         {
-            return new MatchResultResponse(matchResult.Id, matchResult.MatchResultJson);
+            try
+            {
+                var matchResultData = JsonSerializer.Deserialize<JsonElement>(matchResult.MatchResultJson);
+                return new MatchResultResponse(matchResult.Id, matchResultData);
+            }
+            catch (JsonException)
+            {
+                return new MatchResultResponse(matchResult.Id, matchResult.MatchResultJson);
+            }
+
+
         }
     }
 
