@@ -60,8 +60,7 @@ namespace AllocationTeamAPI.Services
                 int id = combination.Item1;
                 List<string> firstHalfStrings = combination.Item2.Select(i => tableNames[i - 1]).ToList();
                 List<string> secondHalfStrings = combination.Item3.Select(i => tableNames[i - 1]).ToList();
-                // Tworzymy nowy obiekt CombinationResult, ale z uwagi na kontekst zadania, może być konieczne dostosowanie lub utworzenie nowej klasy
-                stringList.Add(new CombinationResultResponse<string>   (id, firstHalfStrings, secondHalfStrings)); // To prawdopodobnie wymaga dostosowania
+                stringList.Add(new CombinationResultResponse<string>   (id, firstHalfStrings, secondHalfStrings));
             }
 
             return stringList;
@@ -74,9 +73,8 @@ namespace AllocationTeamAPI.Services
             foreach (var combination in combinations)
             {
                 int id = combination.Item1;
-                // Przekazanie bezpośrednio list kombinacji bez konwersji
-                List<int> firstHalfInts = combination.Item2; // Bezpośrednie przekazanie, bez konwersji
-                List<int> secondHalfInts = combination.Item3; // Bezpośrednie przekazanie, bez konwersji
+                List<int> firstHalfInts = combination.Item2; 
+                List<int> secondHalfInts = combination.Item3; 
 
                 intList.Add(new CombinationResultResponse<int>(id, firstHalfInts, secondHalfInts));
             }
