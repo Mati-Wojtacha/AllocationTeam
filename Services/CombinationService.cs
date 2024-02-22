@@ -25,9 +25,9 @@ namespace AllocationTeamAPI.Services
                         combination.Add(input[j]);
                     }
                 }
-                if (combination.Count == input.Length / 2)
+                if (combination.Count == n / 2)
                 {
-                    if (lastIndex != 0)
+                    if(lastIndex != 0)
                     {
                         combination.Remove(lastIndex);
                     }
@@ -35,12 +35,12 @@ namespace AllocationTeamAPI.Services
                 }
             }
 
-            List<List<int>> firstHalf = result.Take(result.Count / 2).ToList();
-            List<List<int>> secondHalf = result.Skip(result.Count / 2).Take(result.Count / 2).ToList();
+            int halfCount = result.Count / 2;
+            List<List<int>> firstHalf = result.Take(halfCount).ToList();
+            List<List<int>> secondHalf = result.Skip(halfCount).ToList();
             secondHalf.Reverse();
 
             List<Tuple<int, List<int>, List<int>>> combined = new List<Tuple<int, List<int>, List<int>>>();
-
             for (int i = 0; i < firstHalf.Count; i++)
             {
                 combined.Add(new Tuple<int, List<int>, List<int>>(i + 1, firstHalf[i], secondHalf[i]));
